@@ -1,6 +1,6 @@
 import * as Astronomy from 'astronomy-engine';
 import './style.css';
-import { SIGNS, normalize, signOf, degreeInSign, forecastFor } from './astrology.js';
+import { SIGNS, normalize, signOf, degreeInSign, forecastFor, globalForecast } from './astrology.js';
 
 const PLANETS = [
   { key:'Sun', label:'太陽', symbol:'☉', body:Astronomy.Body.Sun },
@@ -18,12 +18,16 @@ const PLANETS = [
 const app = document.querySelector('#app');
 app.innerHTML = `
   <header class="hero">
-    <div><p class="eyebrow">LIVE HOROSCOPE</p><h1>星よみ予報</h1><p>今この瞬間の天体配置から、12星座へ一言。</p></div>
+    <div><p class="eyebrow">LIVE HOROSCOPE</p><h1>星よみ予報</h1><p>今この瞬間の天体配置から、空全体と12星座の流れを読む。</p></div>
     <div class="clock" id="clock"></div>
   </header>
   <main>
+    <section class="global-section">
+      <div class="section-head"><div><p class="section-kicker">CURRENT CELESTIAL FLOW</p><h2>現在の全体運</h2></div><span>10分ごとに再計算</span></div>
+      <article class="global-card" id="globalCard"></article>
+    </section>
     <section class="forecast-section">
-      <div class="section-head"><div><p class="section-kicker">ZODIAC FORECAST</p><h2>12星座の運気ポイント</h2></div><span>10分ごとに再計算</span></div>
+      <div class="section-head"><div><p class="section-kicker">ZODIAC FORECAST</p><h2>12星座の運気ポイント</h2></div><span>星座別の流れ</span></div>
       <div class="forecast-grid" id="forecastGrid"></div>
     </section>
     <section class="horoscope-section">
@@ -68,6 +72,11 @@ function renderWheel(positions) {
 
 function render(date) {
   const positions = planetPositions(date);
+  const global = globalForecast(positions, date);
+  document.querySelector('#globalCard').innerHTML = `
+    <div class="global-symbol">✦</div>
+    <div class="global-copy"><p class="global-label">今の星の流れ</p><h3>${global.text}</h3></div>
+    <div class="global-aspects">${global.aspects.map(item => `<span><b>${item.a.symbol}${item.a.label}</b><i>${item.aspect.label}</i><b>${item.b.symbol}${item.b.label}</b></span>`).join('')}</div>`;
   renderWheel(positions);
   document.querySelector('#planetList').innerHTML = positions.map(p => {
     const si=signOf(p.longitude);

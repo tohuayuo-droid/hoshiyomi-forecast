@@ -147,3 +147,66 @@ export function forecastFor(signIndex, positions, date) {
     influences: influences.slice(0,3)
   };
 }
+
+
+const GLOBAL_PAIR_HINTS = {
+  support: ['流れを広げやすい時','自然な追い風が入りやすい時','協力と前進が噛み合いやすい時'],
+  caution: ['急がず調整を優先したい時','勢いより確認を大切にしたい時','無理に進めず整えたい時'],
+  balance: ['対立より折り合いを探したい時','両方の立場を見直したい時','偏りを戻すことが鍵になる時'],
+  intense: ['大きなテーマが表面化しやすい時','意識の切り替えが起こりやすい時','変化の圧が強まりやすい時']
+};
+
+function pairAspect(a, b) {
+  const distance = angularDistance(a.longitude, b.longitude);
+  let best = null;
+  for (const aspect of ASPECTS) {
+    const delta = Math.abs(distance - aspect.angle);
+    if (delta <= aspect.orb && (!best || delta < best.delta)) {
+      best = { ...aspect, delta, exactness: 1 - delta / aspect.orb };
+    }
+  }
+  return best;
+}
+
+export function buildGlobalAspects(positions) {
+  const items = [];
+  for (let i = 0; i < positions.length; i++) {
+    for (let j = i + 1; j < positions.length; j++) {
+      const a = positions[i];
+      const b = positions[j];
+      const aspect = pairAspect(a, b);
+      if (!aspect) continue;
+      const aw = PLANET_META[a.key]?.baseWeight ?? 1;
+      const bw = PLANET_META[b.key]?.baseWeight ?? 1;
+      const luminaryBoost = ['Sun','Moon'].includes(a.key) || ['Sun','Moon'].includes(b.key) ? 1.10 : 1;
+      const strength = ((aw + bw) / 2) * aspect.weight * (.45 + aspect.exactness * .55) * luminaryBoost;
+      items.push({ a, b, aspect, strength });
+    }
+  }
+  return items.sort((x,y)=>y.strength-x.strength);
+}
+
+export function globalForecast(positions, date) {
+  const aspects = buildGlobalAspects(positions);
+  const top = aspects.slice(0, 3);
+  if (!top.length) {
+    return { text:'静かに足元を整える流れ', tone:'neutral', aspects:[] };
+  }
+
+  const scores = { support:0, caution:0, balance:0, intense:0 };
+  top.forEach(item => { scores[item.aspect.tone] += item.strength; });
+  const tone = Object.entries(scores).sort((a,b)=>b[1]-a[1])[0][0];
+  const lead = top[0];
+  const seed = `${date.toISOString().slice(0,13)}-${lead.a.key}-${lead.b.key}-${lead.aspect.key}`;
+  const list = GLOBAL_PAIR_HINTS[tone] ?? GLOBAL_PAIR_HINTS.intense;
+  let text = list[deterministicIndex(seed, list.length)];
+
+  if (top.length >= 2 && top[1].strength > lead.strength * .88) {
+    const themeA = PLANET_META[lead.a.key]?.theme ?? lead.a.label;
+    const themeB = PLANET_META[top[1].a.key]?.theme ?? top[1].a.label;
+    const compact = `${themeA}と${themeB}の調整が流れを変える時`;
+    if (Array.from(compact).length <= 30) text = compact;
+  }
+
+  return { text:trimJapanese(text, 30), tone, aspects:top };
+}
