@@ -1,0 +1,16 @@
+{
+  "name": "星よみ予報",
+  "short_name": "星よみ",
+  "description": "今この瞬間の天体配置から、空全体と12星座の流れを読む宇宙ダッシュボード",
+  "lang": "ja",
+  "start_url": "/hoshiyomi-forecast/",
+  "scope": "/hoshiyomi-forecast/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#030817",
+  "theme_color": "#071126",
+  "icons": [
+    {"src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable"},
+    {"src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"}
+  ]
+}

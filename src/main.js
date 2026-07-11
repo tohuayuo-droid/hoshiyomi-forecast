@@ -19,7 +19,7 @@ const app = document.querySelector('#app');
 app.innerHTML = `
   <header class="hero">
     <div><p class="eyebrow">LIVE HOROSCOPE</p><h1>星よみ予報</h1><p>今この瞬間の天体配置から、空全体と12星座の流れを読む。</p></div>
-    <div class="clock" id="clock"></div>
+    <div class="hero-actions"><button class="install-button" id="installButton" hidden>ホーム画面に追加</button><div class="clock" id="clock"></div></div>
   </header>
   <main>
     <section class="global-section">
@@ -236,3 +236,30 @@ function refresh() { const now=new Date(); render(now); updateClock(); }
 refresh();
 setInterval(updateClock,1000);
 setInterval(refresh,10*60*1000);
+
+
+let deferredInstallPrompt = null;
+const installButton = document.querySelector('#installButton');
+window.addEventListener('beforeinstallprompt', (event) => {
+  event.preventDefault();
+  deferredInstallPrompt = event;
+  installButton.hidden = false;
+});
+installButton?.addEventListener('click', async () => {
+  if (!deferredInstallPrompt) return;
+  deferredInstallPrompt.prompt();
+  await deferredInstallPrompt.userChoice;
+  deferredInstallPrompt = null;
+  installButton.hidden = true;
+});
+window.addEventListener('appinstalled', () => {
+  deferredInstallPrompt = null;
+  if (installButton) installButton.hidden = true;
+});
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register(`${import.meta.env.BASE_URL}sw.js`).catch((error) => {
+      console.error('Service Worker registration failed:', error);
+    });
+  });
+}
