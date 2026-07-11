@@ -20,11 +20,11 @@ export const HOUSES = [
 ];
 
 export const ASPECTS = [
-  { key:'conjunction', angle:0, orb:8, tone:'intense', weight:1.00, label:'合' },
-  { key:'sextile', angle:60, orb:5, tone:'support', weight:0.72, label:'六分' },
-  { key:'square', angle:90, orb:6, tone:'caution', weight:0.88, label:'矩' },
-  { key:'trine', angle:120, orb:6, tone:'support', weight:1.00, label:'三分' },
-  { key:'opposition', angle:180, orb:7, tone:'balance', weight:0.82, label:'衝' }
+  { key:'conjunction', angle:0, orb:8, tone:'intense', weight:1.00, label:'合', name:'コンジャンクション', symbol:'☌' },
+  { key:'sextile', angle:60, orb:5, tone:'support', weight:0.72, label:'六分', name:'セクスタイル', symbol:'⚹' },
+  { key:'square', angle:90, orb:6, tone:'caution', weight:0.88, label:'矩', name:'スクエア', symbol:'□' },
+  { key:'trine', angle:120, orb:6, tone:'support', weight:1.00, label:'三分', name:'トライン', symbol:'△' },
+  { key:'opposition', angle:180, orb:7, tone:'balance', weight:0.82, label:'衝', name:'オポジション', symbol:'☍' }
 ];
 
 export const PLANET_META = {
