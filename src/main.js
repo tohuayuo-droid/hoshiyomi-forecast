@@ -1,6 +1,6 @@
 import * as Astronomy from 'astronomy-engine';
 import './style.css';
-import { SIGNS, normalize, signOf, degreeInSign, forecastFor, globalForecast } from './astrology.js';
+import { SIGNS, ASPECTS, normalize, signOf, degreeInSign, forecastFor, globalForecast, pairAspectAt, gentleInterpretation } from './astrology.js';
 
 const PLANETS = [
   { key:'Sun', label:'太陽', symbol:'☉', body:Astronomy.Body.Sun, keywords:['意思','目的','自己表現'] },
@@ -26,6 +26,10 @@ app.innerHTML = `
       <div class="section-head"><div><p class="section-kicker">NOW SKY</p><h2>現在の星の流れ</h2></div><span>10分ごとに再計算</span></div>
       <div class="sky-status" id="skyStatus"></div>
       <article class="global-card" id="globalCard"></article>
+    </section>
+    <section class="next-section">
+      <div class="section-head"><div><p class="section-kicker">NEXT CELESTIAL SHIFT</p><h2>次の変化</h2></div><span>48時間先まで</span></div>
+      <div class="next-grid" id="nextChanges"></div>
     </section>
     <section class="forecast-section">
       <div class="section-head"><div><p class="section-kicker">ZODIAC FORECAST</p><h2>12星座の運気ポイント</h2></div><span>星座別の流れ</span></div>
@@ -121,6 +125,53 @@ function openPlanetDialog(planet, date) {
   document.querySelector('#planetDialog').showModal();
 }
 
+
+function formatChangeTime(date, now) {
+  const diff = Math.max(0, date - now);
+  const mins = Math.round(diff / 60000);
+  const absolute = new Intl.DateTimeFormat('ja-JP',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit',hour12:false,timeZone:'Asia/Tokyo'}).format(date);
+  if (mins < 60) return `約${mins}分後 · ${absolute}`;
+  const hours = Math.round(mins / 60);
+  if (hours < 24) return `約${hours}時間後 · ${absolute}`;
+  return `約${Math.round(hours/24)}日後 · ${absolute}`;
+}
+
+function detectNextChanges(now, hoursAhead=48, stepMinutes=15) {
+  const events = [];
+  let prevDate = now;
+  let prev = planetPositions(prevDate);
+  const seen = new Set();
+  for (let minutes=stepMinutes; minutes<=hoursAhead*60; minutes+=stepMinutes) {
+    const date = new Date(now.getTime()+minutes*60000);
+    const cur = planetPositions(date);
+    const prevMoon = prev.find(p=>p.key==='Moon');
+    const curMoon = cur.find(p=>p.key==='Moon');
+    if (signOf(prevMoon.longitude)!==signOf(curMoon.longitude)) {
+      const key=`moon-sign-${signOf(curMoon.longitude)}`;
+      if (!seen.has(key)) { seen.add(key); events.push({date,type:'sign',symbol:'☽',title:`月が${SIGNS[signOf(curMoon.longitude)][0]}へ移動`,description:'気分や日常の空気が、少しずつ切り替わっていきます'}); }
+    }
+    for (let i=0;i<cur.length;i++) for (let j=i+1;j<cur.length;j++) {
+      const before = pairAspectAt(prev[i], prev[j]);
+      const after = pairAspectAt(cur[i], cur[j]);
+      if (!before && after) {
+        const key=`${cur[i].key}-${cur[j].key}-${after.key}`;
+        if (!seen.has(key)) { seen.add(key); events.push({date,type:'aspect',symbol:after.symbol,title:`${cur[i].label}と${cur[j].label}が${after.name}`,description:gentleInterpretation({a:cur[i],b:cur[j],aspect:after})}); }
+      }
+    }
+    for (const p of cur.filter(x=>!['Sun','Moon'].includes(x.key))) {
+      const prevP=prev.find(x=>x.key===p.key);
+      const before=isRetrograde(prevP,prevDate); const after=isRetrograde(p,date);
+      if (before!==after) {
+        const key=`retro-${p.key}-${after}`;
+        if (!seen.has(key)) { seen.add(key); events.push({date,type:'station',symbol:p.symbol,title:`${p.label}が${after?'逆行':'順行'}へ`,description:after?'急がず見直す時間が始まります':'止まっていた流れが、ゆっくり前へ進み始めます'}); }
+      }
+    }
+    prev=cur; prevDate=date;
+    if (events.length>=6) break;
+  }
+  return events.sort((a,b)=>a.date-b.date).slice(0,3);
+}
+
 function render(date) {
   const positions = planetPositions(date);
   const global = globalForecast(positions, date);
@@ -134,6 +185,13 @@ function render(date) {
     <div><span>☽</span><small>MOON IN</small><b>${moonSign}</b></div>
     <div><span>◐</span><small>LUNAR PHASE</small><b>${phaseJa}<em>${phaseEn}</em></b></div>
     <div><span>☿</span><small>MERCURY</small><b>${mercuryRetro ? '逆行' : '順行'}<em>${mercuryRetro ? 'Retrograde' : 'Direct'}</em></b></div>`;
+
+  const nextChanges = detectNextChanges(date);
+  document.querySelector('#nextChanges').innerHTML = nextChanges.length ? nextChanges.map((event,index)=>`
+    <article class="next-card ${index===0?'is-soon':''}">
+      <div class="next-symbol">${event.symbol}</div>
+      <div><small>${formatChangeTime(event.date,date)}</small><h3>${event.title}</h3><p>${event.description}</p></div>
+    </article>`).join('') : '<p class="next-empty">大きな変化は少なく、穏やかな流れが続きそうです。</p>';
 
   document.querySelector('#globalCard').innerHTML = `
     <div class="global-lead">

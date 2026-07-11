@@ -41,11 +41,11 @@ export const PLANET_META = {
 };
 
 const OPENERS = {
-  support:['追い風が入り','流れが整い','自然な助けが入り'],
-  caution:['急がず整えると','丁寧に向き合うと','一呼吸おくと'],
-  balance:['相手との調整で','両方の視点を持つと','偏りを戻すと'],
-  intense:['意識が強まり','テーマが前に出て','変化が濃くなり'],
-  neutral:['小さく整えると','足元を見直すと','静かに進めると']
+  support:['やさしい追い風に乗ると','流れを信じて進むと','小さな好機を受け取ると'],
+  caution:['急がず整えてみると','一呼吸おいて見直すと','今できることから始めると'],
+  balance:['相手の気持ちも想像すると','両方の想いを大切にすると','心地よい距離を探すと'],
+  intense:['心の声に耳を澄ますと','変化の気配を受け入れると','大切なテーマを見つめると'],
+  neutral:['静かな時間をつくると','足元をやさしく整えると','自分のペースを守ると']
 };
 
 const ENDINGS = {
@@ -150,10 +150,10 @@ export function forecastFor(signIndex, positions, date) {
 
 
 const GLOBAL_PAIR_HINTS = {
-  support: ['流れを広げやすい時','自然な追い風が入りやすい時','協力と前進が噛み合いやすい時'],
-  caution: ['急がず調整を優先したい時','勢いより確認を大切にしたい時','無理に進めず整えたい時'],
-  balance: ['対立より折り合いを探したい時','両方の立場を見直したい時','偏りを戻すことが鍵になる時'],
-  intense: ['大きなテーマが表面化しやすい時','意識の切り替えが起こりやすい時','変化の圧が強まりやすい時']
+  support: ['小さな好機を受け取りやすい時','自然な追い風に心を開きたい時','人とのつながりが力になる時'],
+  caution: ['急がず足元を整えたい時','答えを急がず様子を見たい時','休息と確認を大切にしたい時'],
+  balance: ['違いの中に調和を見つけたい時','心地よい距離を探したい時','両方の想いを大切にしたい時'],
+  intense: ['心の奥の声に気づきやすい時','新しい流れの気配を感じる時','手放しの先に光を探したい時']
 };
 
 function pairAspect(a, b) {
@@ -209,4 +209,19 @@ export function globalForecast(positions, date) {
   }
 
   return { text:trimJapanese(text, 30), tone, aspects:top };
+}
+
+
+export function pairAspectAt(a, b) { return pairAspect(a, b); }
+
+export function gentleInterpretation(item) {
+  const themes = [PLANET_META[item.a.key]?.theme ?? item.a.label, PLANET_META[item.b.key]?.theme ?? item.b.label];
+  const base = {
+    conjunction:`${themes[0]}と${themes[1]}が重なり、大切な気づきが生まれそう`,
+    sextile:`${themes[0]}と${themes[1]}が支え合い、小さな好機が見つかりそう`,
+    square:`${themes[0]}と${themes[1]}を整えるほど、次の一歩が見えそう`,
+    trine:`${themes[0]}と${themes[1]}が調和し、自然な追い風を感じられそう`,
+    opposition:`${themes[0]}と${themes[1]}の間に、心地よいバランスを探せそう`
+  };
+  return trimJapanese(base[item.aspect.key] ?? '静かな変化の気配に耳を澄ませたい時', 38);
 }
