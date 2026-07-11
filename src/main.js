@@ -63,13 +63,16 @@ app.innerHTML = `
     <div class="clock" id="clock"></div>
   </header>
   <main>
-    <section class="sky-panel">
-      <div class="wheel-wrap"><div id="wheel" class="wheel"></div></div>
-      <div class="planet-list" id="planetList"></div>
-    </section>
-    <section>
-      <div class="section-head"><h2>12星座の運気ポイント</h2><span>10分ごとに再計算</span></div>
+    <section class="forecast-section">
+      <div class="section-head"><div><p class="section-kicker">ZODIAC FORECAST</p><h2>12星座の運気ポイント</h2></div><span>10分ごとに再計算</span></div>
       <div class="forecast-grid" id="forecastGrid"></div>
+    </section>
+    <section class="horoscope-section">
+      <div class="section-head"><div><p class="section-kicker">LIVE CELESTIAL MAP</p><h2>現在のホロスコープ</h2></div><span>実際の天体位置を表示</span></div>
+      <div class="sky-panel">
+        <div class="wheel-wrap"><div id="wheel" class="wheel"></div></div>
+        <div class="planet-list" id="planetList"></div>
+      </div>
     </section>
     <p class="notice">※占星術的な解釈による娯楽コンテンツです。重要な判断の根拠には使用しないでください。</p>
   </main>
