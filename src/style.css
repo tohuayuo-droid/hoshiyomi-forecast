@@ -27,3 +27,19 @@
 @keyframes shootB{0%,91%{opacity:0;transform:translate3d(0,0,0) rotate(-32deg)}92%{opacity:.8}97%{opacity:0;transform:translate3d(-360px,230px,0) rotate(-32deg)}100%{opacity:0}}
 .forecast-card p{line-height:1.65}.forecast-meta b{color:#d9c18a;font-weight:500}.global-copy h3{line-height:1.65}
 @media(prefers-reduced-motion:reduce){.milky-way,.star-layer,.shooting-star{animation:none}.shooting-star{display:none}}
+
+/* v2.1: denser natural night sky */
+.cosmic-backdrop{position:fixed;inset:0;z-index:-3;pointer-events:none;overflow:hidden;background:linear-gradient(180deg,#00020a 0%,#020817 46%,#071126 78%,#01030a 100%)}
+#starCanvas{position:absolute;inset:0;width:100%;height:100%;opacity:.96}
+.cosmic-backdrop .milky-way{position:absolute;left:-18%;top:4%;width:142%;height:76%;transform:rotate(-13deg);background:radial-gradient(ellipse at center,rgba(220,231,255,.18) 0%,rgba(126,155,218,.11) 20%,rgba(88,93,164,.075) 35%,transparent 67%);filter:blur(25px);mix-blend-mode:screen;opacity:.8}
+.cosmic-backdrop .milky-way:before{content:"";position:absolute;inset:12% 0;background:radial-gradient(ellipse at center,rgba(255,255,255,.12),rgba(138,166,224,.065) 34%,transparent 66%);filter:blur(13px)}
+body:before{z-index:-2;opacity:.48;background:radial-gradient(ellipse at 14% 12%,rgba(32,70,150,.24),transparent 30%),radial-gradient(ellipse at 82% 18%,rgba(89,48,140,.20),transparent 30%),radial-gradient(ellipse at 52% 88%,rgba(22,62,115,.14),transparent 40%);filter:blur(24px)}
+body:after{display:none}
+.shooting-star{position:absolute;width:150px;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.92),transparent);filter:drop-shadow(0 0 5px white);opacity:0;transform:rotate(-28deg)}
+.shooting-star-a{top:18%;right:-180px;animation:shootA 24s ease-in-out infinite 7s}.shooting-star-b{top:42%;right:-220px;animation:shootA 37s ease-in-out infinite 19s}
+@keyframes shootA{0%,88%,100%{opacity:0;transform:translate(0,0) rotate(-28deg)}89%{opacity:1}94%{opacity:0;transform:translate(-680px,360px) rotate(-28deg)}}
+.forecast-card h3{font-weight:300;color:#aeb8cf;letter-spacing:.10em}
+.forecast-card p{font-weight:500}
+.forecast-meta{font-weight:400}
+#forecastTimeIcon{display:inline-block;font-size:.82em;vertical-align:.08em;margin-right:.12em;filter:drop-shadow(0 0 7px rgba(237,204,130,.3))}
+@media(prefers-reduced-motion:reduce){.shooting-star{display:none}.cosmic-backdrop .milky-way{filter:blur(25px)}}

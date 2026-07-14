@@ -17,7 +17,7 @@ const PLANETS = [
 
 const app = document.querySelector('#app');
 app.innerHTML = `
-  <div class="cosmic-backdrop" aria-hidden="true"><div class="milky-way"></div><div class="star-layer star-layer-a"></div><div class="star-layer star-layer-b"></div><i class="shooting-star shooting-star-a"></i><i class="shooting-star shooting-star-b"></i></div>
+  <div class="cosmic-backdrop" aria-hidden="true"><canvas id="starCanvas"></canvas><div class="milky-way"></div><i class="shooting-star shooting-star-a"></i><i class="shooting-star shooting-star-b"></i></div>
   <header class="hero">
     <div><p class="eyebrow">LIVE HOROSCOPE</p><h1>星よみ予報</h1><p>今この瞬間の天体配置から、空全体と12星座の流れを読む。</p></div>
     <div class="hero-actions"><button class="install-button" id="installButton" hidden>ホーム画面に追加</button><div class="clock" id="clock"></div></div>
@@ -33,7 +33,7 @@ app.innerHTML = `
       <div class="next-grid" id="nextChanges"></div>
     </section>
     <section class="forecast-section">
-      <div class="section-head"><div><p class="section-kicker">ZODIAC FORECAST</p><h2>12星座の運気ポイント</h2></div><span>星座別の流れ</span></div>
+      <div class="section-head"><div><p class="section-kicker">ZODIAC FORECAST</p><h2><span id="forecastTimeIcon">✦</span> 12星座の運気ポイント</h2></div><span>星座別の流れ</span></div>
       <div class="forecast-grid" id="forecastGrid"></div>
     </section>
     <section class="horoscope-section">
@@ -173,8 +173,18 @@ function detectNextChanges(now, hoursAhead=48, stepMinutes=15) {
   return events.sort((a,b)=>a.date-b.date).slice(0,3);
 }
 
+function timeIconForJst(date) {
+  const hour = Number(new Intl.DateTimeFormat('en-GB',{hour:'2-digit',hour12:false,timeZone:'Asia/Tokyo'}).format(date));
+  if (hour >= 5 && hour < 10) return '🌅';
+  if (hour >= 10 && hour < 16) return '☀️';
+  if (hour >= 16 && hour < 19) return '🌇';
+  return '🌙';
+}
+
 function render(date) {
   const positions = planetPositions(date);
+  const forecastTimeIcon = document.querySelector('#forecastTimeIcon');
+  if (forecastTimeIcon) forecastTimeIcon.textContent = timeIconForJst(date);
   const global = globalForecast(positions, date);
   const moon = positions.find(p => p.key === 'Moon');
   const mercury = positions.find(p => p.key === 'Mercury');
@@ -218,7 +228,7 @@ function render(date) {
     const detail = `${p.planet.label}・第${p.house.no}ハウス${p.aspect ? `・${p.aspect.name}` : ''}`;
     return `<article class="forecast-card" title="${detail}">
       <div class="sign-icon">${symbol}</div>
-      <div><h3>${name}</h3><p>${forecast.text}</p><small class="forecast-meta"><b>${forecast.time.icon} ${forecast.time.label}のヒント</b> · ${detail}</small></div>
+      <div><h3>${name}</h3><p>${forecast.text}</p><small class="forecast-meta">${detail}</small></div>
     </article>`;
   }).join('');
 
@@ -237,6 +247,52 @@ function refresh() { const now=new Date(); render(now); updateClock(); }
 refresh();
 setInterval(updateClock,1000);
 setInterval(refresh,10*60*1000);
+
+
+function initStarCanvas() {
+  const canvas = document.querySelector('#starCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let stars = [];
+  let dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+  function resize() {
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = Math.floor(innerWidth * dpr);
+    canvas.height = Math.floor(innerHeight * dpr);
+    canvas.style.width = `${innerWidth}px`;
+    canvas.style.height = `${innerHeight}px`;
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    const count = Math.min(900, Math.max(280, Math.floor(innerWidth * innerHeight / 1700)));
+    stars = Array.from({length: count}, (_,i) => ({
+      x: Math.random()*innerWidth, y: Math.random()*innerHeight,
+      r: Math.random()<.82 ? Math.random()*.75+.2 : Math.random()*1.45+.65,
+      a: Math.random()*.72+.18, phase: Math.random()*Math.PI*2,
+      speed: Math.random()*.012+.004, hue: i%13===0 ? 42 : (i%9===0 ? 215 : 0)
+    }));
+  }
+
+  function draw(t=0) {
+    ctx.clearRect(0,0,innerWidth,innerHeight);
+    for (const s of stars) {
+      const alpha = Math.max(.08, Math.min(1, s.a + Math.sin(t*s.speed+s.phase)*.22));
+      ctx.beginPath();
+      ctx.fillStyle = s.hue===42 ? `rgba(255,226,165,${alpha})` : s.hue===215 ? `rgba(176,210,255,${alpha})` : `rgba(255,255,255,${alpha})`;
+      ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+      ctx.fill();
+      if (s.r>1.25) {
+        ctx.strokeStyle = `rgba(255,255,255,${alpha*.28})`;
+        ctx.lineWidth=.45;
+        ctx.beginPath(); ctx.moveTo(s.x-4,s.y); ctx.lineTo(s.x+4,s.y); ctx.moveTo(s.x,s.y-4); ctx.lineTo(s.x,s.y+4); ctx.stroke();
+      }
+    }
+    requestAnimationFrame(draw);
+  }
+  resize();
+  addEventListener('resize', resize, {passive:true});
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) requestAnimationFrame(draw); else draw(0);
+}
+initStarCanvas();
 
 
 let deferredInstallPrompt = null;
