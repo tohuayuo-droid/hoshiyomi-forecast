@@ -1,7 +1,7 @@
-const CACHE_NAME="hoshiyomi-1784038393407";
+const CACHE_NAME="hoshiyomi-1784039270232";
 const APP_SHELL=[
-  "/hoshiyomi-forecast/assets/index-CLPUEn_q.css",
-  "/hoshiyomi-forecast/assets/index-JQtAQjv1.js",
+  "/hoshiyomi-forecast/assets/index-Bp954EXR.js",
+  "/hoshiyomi-forecast/assets/index-C3Gyds4n.css",
   "/hoshiyomi-forecast/enhancements.js",
   "/hoshiyomi-forecast/icons/icon-192.png",
   "/hoshiyomi-forecast/icons/icon-512.png",
