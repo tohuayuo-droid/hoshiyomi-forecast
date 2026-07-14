@@ -198,7 +198,7 @@ function render(date) {
   document.querySelector('#globalCard').innerHTML = `
     <div class="global-lead">
       <div class="global-symbol">✦</div>
-      <div class="global-copy"><p class="global-label">現在もっとも影響の強い配置</p><h3>${global.text}</h3></div>
+      <div class="global-copy"><p class="global-label">🌌 今日の宇宙のテーマ</p><h3>${global.text}</h3></div>
     </div>
     <div class="global-aspects">${global.aspects.map((item,index) => `
       <article class="aspect-item ${index===0?'is-primary':''}">

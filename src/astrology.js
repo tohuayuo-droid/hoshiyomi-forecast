@@ -131,16 +131,16 @@ export function forecastFor(signIndex, positions, date) {
   const actionList = HOUSE_ACTIONS[primary.house.theme][tone] ?? HOUSE_ACTIONS[primary.house.theme].neutral;
   const action = actionList[deterministicIndex(seed+'a', actionList.length)];
   const slot = timeSlot(date, seed+'t');
-  let text = `今日は「${action}」を試すと、物事が進みやすそうです。`;
+  let text = `「${action}」を試すと、物事が進みやすそうです。`;
   if (tone === 'caution' || tone === 'balance') {
-    text = `今日は「${action}」を優先すると、無理なく整えられそうです。`;
+    text = `「${action}」を優先すると、無理なく整えられそうです。`;
   } else if (tone === 'intense') {
-    text = `今日は「${action}」が、気持ちを切り替えるきっかけになりそうです。`;
+    text = `「${action}」が、気持ちを切り替えるきっかけになりそうです。`;
   } else if (tone === 'neutral') {
-    text = `今日は「${action}」から始めると、落ち着いて過ごせそうです。`;
+    text = `「${action}」から始めると、落ち着いて過ごせそうです。`;
   }
   if (secondary && secondary.strength > primary.strength * .9 && secondary.house.theme !== primary.house.theme) {
-    text = `今日は「${action}」を優先。${secondary.house.theme}は急がなくて大丈夫です。`;
+    text = `「${action}」を優先。${secondary.house.theme}は急がなくて大丈夫です。`;
   }
   return { text:trimJapanese(text,52), primary, secondary, influences:influences.slice(0,3), time:slot };
 }
