@@ -40,33 +40,32 @@ export const PLANET_META = {
   Pluto:   { theme:'再生', pace:'long', baseWeight:1.18 }
 };
 
-const OPENERS = {
-  support:['やさしい追い風に乗ると','流れを信じて進むと','小さな好機を受け取ると'],
-  caution:['急がず整えてみると','一呼吸おいて見直すと','今できることから始めると'],
-  balance:['相手の気持ちも想像すると','両方の想いを大切にすると','心地よい距離を探すと'],
-  intense:['心の声に耳を澄ますと','変化の気配を受け入れると','大切なテーマを見つめると'],
-  neutral:['静かな時間をつくると','足元をやさしく整えると','自分のペースを守ると']
+const TIME_SLOTS = [
+  { key:'morning', label:'朝', icon:'🌅', start:5, end:11 },
+  { key:'day', label:'昼', icon:'☀️', start:11, end:16 },
+  { key:'evening', label:'夕方', icon:'🌇', start:16, end:20 },
+  { key:'night', label:'夜', icon:'🌙', start:20, end:29 }
+];
+
+const HOUSE_ACTIONS = {
+  自分:{ support:['迷っていたことを一つ決める','先延ばしの用事を始める'], caution:['予定を一つ減らす','返事の前に一呼吸おく'], balance:['自分の希望を短く伝える','相手と条件をすり合わせる'], intense:['本音をメモに書き出す','古い目標を見直す'], neutral:['今日やることを三つに絞る'] },
+  お金:{ support:['必要な買い物を比較して決める','固定費を一つ見直す'], caution:['衝動買いを明日に延ばす','金額を確認してから支払う'], balance:['自分用と共有用を分ける','貸し借りの条件を確認する'], intense:['使っていない物を手放す','お金の不安を数字にする'], neutral:['財布や口座を整理する'] },
+  学び:{ support:['気になる人へ連絡する','調べたことを誰かに共有する'], caution:['送信前に宛先と日時を確認する','情報を一つずつ確かめる'], balance:['話す時間と聞く時間を半分にする','結論より質問を先にする'], intense:['言えなかったことを文章にする','古い思い込みを調べ直す'], neutral:['未返信を一件だけ片づける'] },
+  居場所:{ support:['部屋の一角を整える','家族とゆっくり食事をする'], caution:['家事を完璧にしようとしない','疲れたら早めに帰る'], balance:['一人の時間と家族時間を分ける','身近な人へ希望を伝える'], intense:['思い出の品を一つ整理する','安心できる場所を作り直す'], neutral:['机の上を五分だけ片づける'] },
+  楽しみ:{ support:['好きなことを予定に入れる','気になる相手へ素直に返す'], caution:['反応を急かさず待つ','遊びの予定を詰め込みすぎない'], balance:['自分の楽しみと相手の希望を両立する','誘う前に相手の都合を聞く'], intense:['眠っていた作品を再開する','本当に好きなものを選び直す'], neutral:['十分だけ好きなことをする'] },
+  日課:{ support:['面倒な作業を最初に終える','作業手順を一つ改善する'], caution:['休憩を予定に入れる','無理な残業を引き受けない'], balance:['頼る仕事と自分でやる仕事を分ける','役割分担を言葉にする'], intense:['続かない習慣をやめる','生活リズムを立て直す'], neutral:['明日の準備を一つ済ませる'] },
+  対人:{ support:['相談を一人で抱えず共有する','感謝を具体的に伝える'], caution:['返事を急がせない','相手の言葉を最後まで聞く'], balance:['譲れる条件と譲れない条件を分ける','対等な落としどころを探す'], intense:['曖昧な関係に名前をつける','距離感を率直に見直す'], neutral:['大切な人へ短い連絡をする'] },
+  共有:{ support:['深い相談を信頼できる人にする','共同作業の条件を確認する'], caution:['秘密や個人情報を慎重に扱う','借り物や共有物を確認する'], balance:['頼る範囲を具体的に決める','負担の偏りを話し合う'], intense:['執着していることを一つ手放す','言いにくい本音を整理する'], neutral:['共有事項をメモにまとめる'] },
+  探究:{ support:['専門的な記事を一本読む','遠い場所の情報を調べる'], caution:['結論を出す前に別の資料を見る','予定変更に余白を残す'], balance:['理想と現実の条件を並べる','異なる意見を一つ読む'], intense:['価値観が変わった理由を考える','学び直すテーマを決める'], neutral:['知らない言葉を一つ調べる'] },
+  仕事:{ support:['成果を具体的な数字で共有する','重要な提案を形にする'], caution:['期限と担当を再確認する','曖昧な依頼をそのまま受けない'], balance:['自分の役割と相手の期待を合わせる','優先順位を上司や仲間と確認する'], intense:['目標を現実的に組み直す','不要な責任を手放す'], neutral:['今日の最優先を一つ決める'] },
+  仲間:{ support:['仲間へアイデアを共有する','未来の予定を一つ決める'], caution:['グループの空気に流されない','約束を増やしすぎない'], balance:['全員の意見を一度並べる','協力できる範囲を明確にする'], intense:['付き合い方を見直す','古い所属から距離を取る'], neutral:['気になる人へ近況を送る'] },
+  休息:{ support:['一人で静かに過ごす時間を取る','早めに眠る準備をする'], caution:['判断を疲れたまま下さない','予定を詰めず回復を優先する'], balance:['人と会う時間と休む時間を分ける','助ける前に自分の余力を確認する'], intense:['終わったことを手放す儀式をする','心に残る感情を書き出す'], neutral:['通知を切って十分休む'] }
 };
 
-const ENDINGS = {
-  自分:['一歩が決まりそう','自分らしく動けそう','決断に芯が通りそう'],
-  お金:['使い方が整いそう','価値ある選択ができそう','収支の勘が働きそう'],
-  学び:['言葉が届きやすそう','学びが形になりそう','連絡が流れを変えそう'],
-  居場所:['安心できる場が整いそう','身近な関係が和らぎそう','心の土台が戻りそう'],
-  楽しみ:['創作や恋に光が差しそう','好きなことが力になりそう','遊び心が運を呼びそう'],
-  日課:['仕事の段取りが整いそう','習慣を立て直せそう','体調管理が実を結びそう'],
-  対人:['関係が一歩深まりそう','対話から道が開けそう','良い協力が生まれそう'],
-  共有:['深い話が前進につながりそう','手放しが転機になりそう','信頼を育てられそう'],
-  探究:['視野が大きく広がりそう','遠くの情報が役立ちそう','学び直しが効きそう'],
-  仕事:['評価につながる動きができそう','目標が具体化しそう','責任ある一歩が実りそう'],
-  仲間:['仲間との縁が広がりそう','未来の話が動き出しそう','協力者が見つかりそう'],
-  休息:['休むほど感覚が戻りそう','内省から答えが見えそう','手放すほど軽くなれそう']
-};
-
-const PLANET_HINTS = {
-  Sun:'自分の意思を大切に', Moon:'気分の波を丁寧に', Mercury:'確認と言葉選びを意識し',
-  Venus:'好意を素直に示し', Mars:'勢いを順序に変え', Jupiter:'少し大きな視点を持ち',
-  Saturn:'地道さを優先し', Uranus:'新しい方法を試し', Neptune:'直感と事実を分け', Pluto:'古いやり方を手放し'
+const PLANET_PREFIX = {
+  Sun:'自分の意思を基準に', Moon:'気分の波を否定せず', Mercury:'言葉と数字を確認して',
+  Venus:'好意を具体的に示して', Mars:'勢いを一つの行動に絞って', Jupiter:'少し広い視点を持って',
+  Saturn:'期限と手順を守って', Uranus:'いつもと違う方法を試して', Neptune:'直感と事実を分けて', Pluto:'古いやり方を手放して'
 };
 
 export function normalize(angle) { return ((angle % 360) + 360) % 360; }
@@ -84,9 +83,7 @@ function findAspect(anchorLongitude, planetLongitude) {
   let best = null;
   for (const aspect of ASPECTS) {
     const delta = Math.abs(distance - aspect.angle);
-    if (delta <= aspect.orb && (!best || delta < best.delta)) {
-      best = { ...aspect, delta, exactness: 1 - delta / aspect.orb };
-    }
+    if (delta <= aspect.orb && (!best || delta < best.delta)) best = { ...aspect, delta, exactness: 1 - delta / aspect.orb };
   }
   return best;
 }
@@ -107,8 +104,7 @@ export function buildInfluences(signIndex, positions, date) {
     const aspectStrength = aspect ? aspect.weight * (.45 + aspect.exactness * .55) : .24;
     const houseEmphasis = [1,4,7,10].includes(house.no) ? 1.10 : [2,5,8,11].includes(house.no) ? 1.04 : 1;
     const strength = meta.baseWeight * paceMultiplier(meta.pace, date) * aspectStrength * houseEmphasis;
-    const tone = aspect?.tone ?? 'neutral';
-    return { planet, meta, house, aspect, tone, strength };
+    return { planet, meta, house, aspect, tone:aspect?.tone ?? 'neutral', strength };
   }).sort((a,b)=>b.strength-a.strength);
 }
 
@@ -118,42 +114,38 @@ function deterministicIndex(seed, length) {
   return Math.abs(hash) % length;
 }
 
-function trimJapanese(text, max=30) { return Array.from(text).slice(0,max).join(''); }
+function jstHour(date) { return (date.getUTCHours() + 9) % 24; }
+function timeSlot(date, seed) {
+  const current = jstHour(date);
+  const candidates = TIME_SLOTS.filter(x => current <= x.end || x.key === 'night');
+  return candidates[deterministicIndex(seed, candidates.length)] ?? TIME_SLOTS[3];
+}
+function trimJapanese(text, max=46) { return Array.from(text).slice(0,max).join(''); }
 
 export function forecastFor(signIndex, positions, date) {
   const influences = buildInfluences(signIndex, positions, date);
   const primary = influences[0];
   const secondary = influences.find((item, index) => index > 0 && item.house.no !== primary.house.no) ?? influences[1];
-  const dominantTone = primary.strength >= .55 ? primary.tone : 'neutral';
-  const seed = `${date.toISOString().slice(0,13)}-${signIndex}-${primary.planet.key}-${primary.house.no}-${primary.aspect?.key ?? 'none'}`;
-  const openerList = OPENERS[dominantTone];
-  const endingList = ENDINGS[primary.house.theme];
-  const opener = openerList[deterministicIndex(seed+'o', openerList.length)];
-  const ending = endingList[deterministicIndex(seed+'e', endingList.length)];
-
-  let text = `${opener}${ending}`;
-  if (dominantTone === 'caution' || dominantTone === 'balance') {
-    const hint = PLANET_HINTS[primary.planet.key];
-    text = `${hint}${ending}`;
-  } else if (secondary && secondary.strength > primary.strength * .82) {
-    const compact = `${primary.house.theme}と${secondary.house.theme}に追い風`;
-    if (Array.from(compact).length <= 30) text = compact;
+  const tone = primary.strength >= .55 ? primary.tone : 'neutral';
+  const seed = `${date.toISOString().slice(0,10)}-${signIndex}-${primary.planet.key}-${primary.house.no}-${primary.aspect?.key ?? 'none'}`;
+  const actionList = HOUSE_ACTIONS[primary.house.theme][tone] ?? HOUSE_ACTIONS[primary.house.theme].neutral;
+  const action = actionList[deterministicIndex(seed+'a', actionList.length)];
+  const slot = timeSlot(date, seed+'t');
+  const prefix = PLANET_PREFIX[primary.planet.key];
+  let text = `${slot.icon}${slot.label}は${action}と流れが整いそう`;
+  if (tone === 'caution' || tone === 'balance') text = `${slot.icon}${slot.label}は${prefix}${action}のがよさそう`;
+  if (secondary && secondary.strength > primary.strength * .9 && secondary.house.theme !== primary.house.theme) {
+    text = `${slot.icon}${slot.label}は${primary.house.theme}を優先。${secondary.house.theme}は急がなくて大丈夫`;
   }
-
-  return {
-    text: trimJapanese(text, 30),
-    primary,
-    secondary,
-    influences: influences.slice(0,3)
-  };
+  return { text:trimJapanese(text,46), primary, secondary, influences:influences.slice(0,3), time:slot };
 }
 
 
 const GLOBAL_PAIR_HINTS = {
-  support: ['小さな好機を受け取りやすい時','自然な追い風に心を開きたい時','人とのつながりが力になる時'],
-  caution: ['急がず足元を整えたい時','答えを急がず様子を見たい時','休息と確認を大切にしたい時'],
-  balance: ['違いの中に調和を見つけたい時','心地よい距離を探したい時','両方の想いを大切にしたい時'],
-  intense: ['心の奥の声に気づきやすい時','新しい流れの気配を感じる時','手放しの先に光を探したい時']
+  support: ['連絡や相談は今日のうちに。動くほど話がまとまりそう','予定を一つ前へ進めると、次の選択肢が見えてきそう','人に頼ることで、止まっていた用事が動き出しそう'],
+  caution: ['大きな決断は急がず、期限と条件を先に確認したい時','予定を詰めるより、一つ終わらせてから次へ進みたい時','疲れたまま返事をせず、休んでから判断したい時'],
+  balance: ['自分の希望だけでなく、相手の条件も言葉にして合わせたい時','譲れる点と譲れない点を分けると、話が進みやすい時','返事を急がせず、互いの予定を確認して決めたい時'],
+  intense: ['続けるか迷っていることを、率直に見直すのに向く時','曖昧なままの用事を一つ決めると、気持ちが軽くなりそう','古いやり方を一つやめると、新しい流れが入りやすい時']
 };
 
 function pairAspect(a, b) {
@@ -208,7 +200,7 @@ export function globalForecast(positions, date) {
     if (Array.from(compact).length <= 30) text = compact;
   }
 
-  return { text:trimJapanese(text, 30), tone, aspects:top };
+  return { text:trimJapanese(text, 52), tone, aspects:top };
 }
 
 

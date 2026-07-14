@@ -17,6 +17,7 @@ const PLANETS = [
 
 const app = document.querySelector('#app');
 app.innerHTML = `
+  <div class="cosmic-backdrop" aria-hidden="true"><div class="milky-way"></div><div class="star-layer star-layer-a"></div><div class="star-layer star-layer-b"></div><i class="shooting-star shooting-star-a"></i><i class="shooting-star shooting-star-b"></i></div>
   <header class="hero">
     <div><p class="eyebrow">LIVE HOROSCOPE</p><h1>星よみ予報</h1><p>今この瞬間の天体配置から、空全体と12星座の流れを読む。</p></div>
     <div class="hero-actions"><button class="install-button" id="installButton" hidden>ホーム画面に追加</button><div class="clock" id="clock"></div></div>
@@ -217,7 +218,7 @@ function render(date) {
     const detail = `${p.planet.label}・第${p.house.no}ハウス${p.aspect ? `・${p.aspect.name}` : ''}`;
     return `<article class="forecast-card" title="${detail}">
       <div class="sign-icon">${symbol}</div>
-      <div><h3>${name}</h3><p>${forecast.text}</p><small class="forecast-meta">${detail}</small></div>
+      <div><h3>${name}</h3><p>${forecast.text}</p><small class="forecast-meta"><b>${forecast.time.icon} ${forecast.time.label}のヒント</b> · ${detail}</small></div>
     </article>`;
   }).join('');
 
