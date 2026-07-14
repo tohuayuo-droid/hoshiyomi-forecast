@@ -131,13 +131,18 @@ export function forecastFor(signIndex, positions, date) {
   const actionList = HOUSE_ACTIONS[primary.house.theme][tone] ?? HOUSE_ACTIONS[primary.house.theme].neutral;
   const action = actionList[deterministicIndex(seed+'a', actionList.length)];
   const slot = timeSlot(date, seed+'t');
-  const prefix = PLANET_PREFIX[primary.planet.key];
-  let text = `${slot.icon}${slot.label}は${action}と流れが整いそう`;
-  if (tone === 'caution' || tone === 'balance') text = `${slot.icon}${slot.label}は${prefix}${action}のがよさそう`;
-  if (secondary && secondary.strength > primary.strength * .9 && secondary.house.theme !== primary.house.theme) {
-    text = `${slot.icon}${slot.label}は${primary.house.theme}を優先。${secondary.house.theme}は急がなくて大丈夫`;
+  let text = `今日は「${action}」を試すと、物事が進みやすそうです。`;
+  if (tone === 'caution' || tone === 'balance') {
+    text = `今日は「${action}」を優先すると、無理なく整えられそうです。`;
+  } else if (tone === 'intense') {
+    text = `今日は「${action}」が、気持ちを切り替えるきっかけになりそうです。`;
+  } else if (tone === 'neutral') {
+    text = `今日は「${action}」から始めると、落ち着いて過ごせそうです。`;
   }
-  return { text:trimJapanese(text,46), primary, secondary, influences:influences.slice(0,3), time:slot };
+  if (secondary && secondary.strength > primary.strength * .9 && secondary.house.theme !== primary.house.theme) {
+    text = `今日は「${action}」を優先。${secondary.house.theme}は急がなくて大丈夫です。`;
+  }
+  return { text:trimJapanese(text,52), primary, secondary, influences:influences.slice(0,3), time:slot };
 }
 
 

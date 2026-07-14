@@ -33,7 +33,7 @@ app.innerHTML = `
       <div class="next-grid" id="nextChanges"></div>
     </section>
     <section class="forecast-section">
-      <div class="section-head"><div><p class="section-kicker">ZODIAC FORECAST</p><h2><span id="forecastTimeIcon">✦</span> 12星座の運気ポイント</h2></div><span>星座別の流れ</span></div>
+      <div class="section-head"><div><p class="section-kicker">ZODIAC FORECAST</p><h2>12星座の運気ポイント</h2></div><span>星座別の流れ</span></div>
       <div class="forecast-grid" id="forecastGrid"></div>
     </section>
     <section class="horoscope-section">
@@ -173,18 +173,9 @@ function detectNextChanges(now, hoursAhead=48, stepMinutes=15) {
   return events.sort((a,b)=>a.date-b.date).slice(0,3);
 }
 
-function timeIconForJst(date) {
-  const hour = Number(new Intl.DateTimeFormat('en-GB',{hour:'2-digit',hour12:false,timeZone:'Asia/Tokyo'}).format(date));
-  if (hour >= 5 && hour < 10) return '🌅';
-  if (hour >= 10 && hour < 16) return '☀️';
-  if (hour >= 16 && hour < 19) return '🌇';
-  return '🌙';
-}
 
 function render(date) {
   const positions = planetPositions(date);
-  const forecastTimeIcon = document.querySelector('#forecastTimeIcon');
-  if (forecastTimeIcon) forecastTimeIcon.textContent = timeIconForJst(date);
   const global = globalForecast(positions, date);
   const moon = positions.find(p => p.key === 'Moon');
   const mercury = positions.find(p => p.key === 'Mercury');
@@ -228,7 +219,7 @@ function render(date) {
     const detail = `${p.planet.label}・第${p.house.no}ハウス${p.aspect ? `・${p.aspect.name}` : ''}`;
     return `<article class="forecast-card" title="${detail}">
       <div class="sign-icon">${symbol}</div>
-      <div><h3>${name}</h3><p>${forecast.text}</p><small class="forecast-meta">${detail}</small></div>
+      <div><h3><span class="time-icon" aria-hidden="true">${forecast.time.icon}</span>${name}</h3><p>${forecast.text}</p><small class="forecast-meta">${detail}</small></div>
     </article>`;
   }).join('');
 
